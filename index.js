@@ -1,10 +1,4 @@
 // === Imports ===
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const express = require("express");
-const { File } = require('megajs');
-const P = require('pino');
 const {
   default: makeWASocket,
   useMultiFileAuthState,
@@ -13,13 +7,24 @@ const {
   fetchLatestBaileysVersion,
   Browsers,
   makeInMemoryStore,
-  getContentType
+  getContentType,
+  generateWAMessageFromContent,
+  proto,
+  downloadContentFromMessage
 } = require('@whiskeysockets/baileys');
 
-const config = require('./config');
+const l = console.log;
 const { sms } = require('./lib/functions');
-const GroupEvents = require('./lib/groupevents');
 const { saveMessage } = require('./data');
+const GroupEvents = require('./lib/groupevents');
+const fs = require('fs');
+const P = require('pino');
+const config = require('./config');
+const { File } = require('megajs');
+const express = require("express");
+const path = require("path");
+const os = require("os");
+const axios = require("axios");
 
 // === Owner Numbers ===
 const ownerNumber = ['50949100359', '50955928517', '243857465570', '243893024237'];
@@ -27,21 +32,19 @@ const ownerNumber = ['50949100359', '50955928517', '243857465570', '243893024237
 // === Temp Directory ===
 const tempDir = path.join(os.tmpdir(), 'cache-temp');
 if (!fs.existsSync(tempDir)) fs.mkdirSync(tempDir);
-const clearTempDir = () => {
+setInterval(() => {
   fs.readdir(tempDir, (err, files) => {
-    if (err) throw err;
+    if (err) return;
     for (const file of files) fs.unlinkSync(path.join(tempDir, file));
   });
-};
-setInterval(clearTempDir, 5 * 60 * 1000);
+}, 5 * 60 * 1000);
 
 // === Session Mega ===
 const sessionFilePath = path.join(__dirname, 'sessions', 'creds.json');
 if (!fs.existsSync(sessionFilePath)) {
   if (!config.SESSION_ID || !config.SESSION_ID.includes("#")) {
-    console.error("\x1b[31m%s\x1b[0m", "❌ SESSION_ID invalide ou manquante !");
-    console.error("\x1b[33m%s\x1b[0m", "Définissez un lien Mega complet avec le hash dans config.env :");
-    console.error("\x1b[36m%s\x1b[0m", "SESSION_ID=https://mega.nz/file/EXAMPLE#HASH");
+    console.error("❌ SESSION_ID invalide ou manquante !");
+    console.error("➡️ Ajoute un lien Mega complet dans config.env");
     process.exit(1);
   }
   const sessdata = config.SESSION_ID.replace("BUTTERFLY~XMD~", '');
@@ -93,34 +96,31 @@ async function connectToWA() {
       console.log('BUTTERFLY-XMD CONNECTED ✅');
 
       // === Message stylisé ===
-      console.log(`
-╭───〔 🤖 𝑩𝑻𝑭 𝘽𝙊𝙏 〕───⬣
+      let statusMsg = `
+╭───〔 🤖 BUTTERFLY 〕───⬣
 │ ߷ *Etat*       ➜ Connecté ✅
 │ ߷ *Préfixe*    ➜ ${config.PREFIX}
 │ ߷ *Mode*       ➜ ${config.MODE}
 │ ߷ *Commandes*  ➜ 335
 │ ߷ *Version*    ➜ 2.0.4
-│ ߷ *Développeur*➜ JON
+│ ߷ *Développeur*➜ JON TECH
 ╰──────────────⬣
-      `);
+      `;
+
+      // envoie dans ton WhatsApp avec une image
+      await conn.sendMessage(conn.user.id, { 
+        image: { url: "https://files.catbox.moe/us666o.jpg" }, 
+        caption: statusMsg 
+      });
     }
   });
 
   conn.ev.on('creds.update', saveCreds);
 
-  // === Anti-Delete ===
-  conn.ev.on('messages.update', async updates => {
-    for (const update of updates) {
-      if (update.update.message === null) {
-        // ici tu peux appeler ta fonction AntiDelete
-      }
-    }
-  });
-
   // === Group events ===
   conn.ev.on("group-participants.update", (update) => GroupEvents(conn, update));
 
-  // === Read messages / Status auto ===
+  // === Messages handler ===
   conn.ev.on('messages.upsert', async (m) => {
     let mek = m.messages[0];
     if (!mek.message) return;
@@ -129,11 +129,10 @@ async function connectToWA() {
     if (config.READ_MESSAGE === 'true') await conn.readMessages([mek.key]);
     await saveMessage(mek);
 
-    // Ici tu peux ajouter le handler pour les commandes
     sms(conn, mek);
   });
 
-  // === Utilitaires ===
+  // === Utils ===
   conn.decodeJid = jid => {
     if (!jid) return jid;
     if (/:\d+@/gi.test(jid)) {
