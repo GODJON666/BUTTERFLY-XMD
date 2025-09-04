@@ -5,8 +5,17 @@ function convertToBool(text, fault = 'true') {
     return text === fault ? true : false;
 }
 
+// Vérification du SESSION_ID
+const SESSION_ID = process.env.SESSION_ID || "";
+if (!SESSION_ID || !SESSION_ID.includes("#")) {
+    console.error("\x1b[31m%s\x1b[0m", "❌ SESSION_ID invalide ou manquante !"); 
+    console.error("\x1b[33m%s\x1b[0m", "Veuillez définir un lien Mega complet avec le hash dans config.env :");
+    console.error("\x1b[36m%s\x1b[0m", "SESSION_ID=https://mega.nz/file/EXAMPLE#HASH");
+    process.exit(1); // Stop le bot pour éviter l'erreur megajs
+}
+
 module.exports = {
-    SESSION_ID: process.env.SESSION_ID || "put your session id here",
+    SESSION_ID,
     AUTO_STATUS_SEEN: process.env.AUTO_STATUS_SEEN || "false",
     AUTO_STATUS_REPLY: process.env.AUTO_STATUS_REPLY || "false",
     AUTO_STATUS_REACT: process.env.AUTO_STATUS_REACT || "false",
@@ -18,8 +27,7 @@ module.exports = {
     MENU_IMAGE_URL: process.env.MENU_IMAGE_URL || "https://files.catbox.moe/us666o.jpg",
     PREFIX: process.env.PREFIX || ".",
     BOT_NAME: process.env.BOT_NAME || "buttefly xmd",
-    STICKER_NAME: process.env.STICKER_NAME || `𝗟𝗘𝗦 𝗣𝗘𝗧𝗜𝗧𝗦 𝗣𝗔𝗣𝗜𝗟𝗟𝗢𝗡𝗦 𝗡𝗘 𝗙𝗢𝗡𝗧 𝗣𝗔𝗦 𝗗𝗘 𝗕𝗥𝗨𝗜𝗧 𝗠𝗔𝗜𝗦 𝗤𝗨𝗔𝗡𝗗 𝗜𝗟𝗦 𝗕𝗢𝗨𝗚𝗘𝗡𝗧, 𝗟𝗘 𝗠𝗢𝗡𝗗𝗘 𝗧𝗥𝗘𝗠𝗕𝗟𝗘.
-𝗕𝗨𝗧𝗧𝗘𝗥𝗙𝗟𝗬 — 𝗟𝗘 𝗦𝗜𝗟𝗘𝗡𝗖𝗘 𝗔 𝗨𝗡 𝗩𝗘́𝗡𝗢𝗠𝗘.`,
+    STICKER_NAME: process.env.STICKER_NAME || `𝗟𝗘𝗦 𝗣𝗘𝗧𝗜𝗧𝗦 𝗣𝗔𝗣𝗜𝗟𝗟𝗢𝗡𝗦 𝗡𝗘 𝗙𝗢𝗡𝗧 𝗣𝗔𝗦 𝗗𝗘 𝗕𝗥𝗨𝗜𝗧...`,
     CUSTOM_REACT: process.env.CUSTOM_REACT || "false",
     CUSTOM_REACT_EMOJIS: process.env.CUSTOM_REACT_EMOJIS || "💝,💖,💗,❤️‍🩹,❤️,🧡,💛,💚,💙,💜,🤎,🖤,🤍",
     DELETE_LINKS: process.env.DELETE_LINKS || "true",
