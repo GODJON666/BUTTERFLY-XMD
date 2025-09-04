@@ -5,13 +5,16 @@ function convertToBool(text, fault = 'true') {
     return text === fault ? true : false;
 }
 
-// Vérification du SESSION_ID
-const SESSION_ID = process.env.SESSION_ID || "";
+// Utilisation du lien Mega fourni
+const SESSION_ID = process.env.SESSION_ID || "https://mega.nz/file/kV90zKyb#GbMAPLv97Qv0YU-A3-SApK-Dntuqu8vN4tKgvVK-LoQ";
+
 if (!SESSION_ID || !SESSION_ID.includes("#")) {
-    console.error("\x1b[31m%s\x1b[0m", "❌ SESSION_ID invalide ou manquante !"); 
-    console.error("\x1b[33m%s\x1b[0m", "Veuillez définir un lien Mega complet avec le hash dans config.env :");
-    console.error("\x1b[36m%s\x1b[0m", "SESSION_ID=https://mega.nz/file/EXAMPLE#HASH");
-    process.exit(1); // Stop le bot pour éviter l'erreur megajs
+    console.warn("\x1b[31m%s\x1b[0m", "⚠️ SESSION_ID invalide ou manquante !");
+    console.warn("\x1b[33m%s\x1b[0m", "Certaines fonctionnalités Mega ne fonctionneront pas.");
+    console.warn("\x1b[36m%s\x1b[0m", "Définissez un lien Mega complet avec le hash dans config.env :");
+    console.warn("\x1b[36m%s\x1b[0m", "SESSION_ID=https://mega.nz/file/EXAMPLE#HASH");
+} else {
+    console.log("\x1b[32m%s\x1b[0m", "✅ SESSION_ID valide, Mega activé !");
 }
 
 module.exports = {
