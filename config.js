@@ -29,9 +29,8 @@ PREFIX: process.env.PREFIX || ".",
 // add your prifix for bot   
 BOT_NAME: process.env.BOT_NAME || "buttefly xmd",
 // add bot namw here for menu
-STICKER_NAME: process.env.STICKER_NAME || "𝗟𝗘𝗦 𝗣𝗘𝗧𝗜𝗧𝗦 𝗣𝗔𝗣𝗜𝗟𝗟𝗢𝗡𝗦 𝗡𝗘 𝗙𝗢𝗡𝗧 𝗣𝗔𝗦 𝗗𝗘 𝗕𝗥𝗨𝗜𝗧…  
-𝗠𝗔𝗜𝗦 𝗤𝗨𝗔𝗡𝗗 𝗜𝗟𝗦 𝗕𝗢𝗨𝗚𝗘𝗡𝗧, 𝗟𝗘 𝗠𝗢𝗡𝗗𝗘 𝗧𝗥𝗘𝗠𝗕𝗟𝗘.  
-𝗕𝗨𝗧𝗧𝗘𝗥𝗙𝗟𝗬 — 𝗟𝗘 𝗦𝗜𝗟𝗘𝗡𝗖𝗘 𝗔 𝗨𝗡 𝗩𝗘́𝗡𝗢𝗠𝗘.",
+STICKER_NAME: process.env.STICKER_NAME || `𝗟𝗘𝗦 𝗣𝗘𝗧𝗜𝗧𝗦 𝗣𝗔𝗣𝗜𝗟𝗟𝗢𝗡𝗦 𝗡𝗘 𝗙𝗢𝗡𝗧 𝗣𝗔𝗦 𝗗𝗘 𝗕𝗥𝗨𝗜𝗧 𝗠𝗔𝗜𝗦 𝗤𝗨𝗔𝗡𝗗 𝗜𝗟𝗦 𝗕𝗢𝗨𝗚𝗘𝗡𝗧, 𝗟𝗘 𝗠𝗢𝗡𝗗𝗘 𝗧𝗥𝗘𝗠𝗕𝗟𝗘.
+𝗕𝗨𝗧𝗧𝗘𝗥𝗙𝗟𝗬 — 𝗟𝗘 𝗦𝗜𝗟𝗘𝗡𝗖𝗘 𝗔 𝗨𝗡 𝗩𝗘́𝗡𝗢𝗠𝗘.`
 // type sticker pack name 
 CUSTOM_REACT: process.env.CUSTOM_REACT || "false",
 // make this true for custum emoji react    
